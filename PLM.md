@@ -1,4 +1,4 @@
-# Pracrical Maiuchine Learning
+# Practical Machine Learning
 kimsungguen  
 2015년 11월 20일  
 
