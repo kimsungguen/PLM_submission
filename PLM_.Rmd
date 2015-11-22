@@ -1,0 +1,138 @@
+---
+title: "Practical Machine Learning"
+author: "kimsungguen"
+date: "2015년 11월 20일"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+## package import
+```{r}
+library(caret)
+```
+
+
+## path setting & data loading
+```{r}
+setwd("D:/git/github/plm1/PLM_submission")
+testing_sub = read.csv("pml-testing.csv", head = TRUE)
+pjdata = read.csv("pml-training.csv", head = TRUE)
+```
+
+
+## variable exploration 
+  - number of variable : 160 variable
+  - mode of variable : num, chr, Factor(three kind of variable)
+  - kind of NA : NA,"","#DIV/0!" - three type of NA
+```{r}
+names(pjdata)
+str(pjdata)
+```
+
+
+## data loading again for "NA" value preprocess  
+  - Convert (NA,"","#DIV/0!") to  NA using  "na.strings" argument
+```{r}
+testing_sub = read.csv("pml-testing.csv", 
+                       head = TRUE, 
+                       na.strings = c(NA,"","#DIV/0!"))
+
+pjdata = read.csv("pml-training.csv",
+                  head = TRUE, 
+                  na.strings = c(NA,"","#DIV/0!"))
+```
+
+
+## data cleaning
+  - count NA each variables    
+  - loading variables without NA columns to pjdata
+```{r}
+colSums(is.na(pjdata))
+pjdata = pjdata[,colSums(is.na(pjdata)) == 0]
+testing_sub = testing_sub[,colSums(is.na(testing_sub)) == 0]
+names(pjdata)
+```
+
+
+  - deleted meaningless variables (columns 1~7)
+```{r}
+pjdata = pjdata[,-c(1:7)]
+testing_sub = testing_sub[,-c(1:7)]
+names(pjdata)
+```
+
+
+## data splitting
+  - 70% of data for training, 30% of data for testing
+```{r}
+intrain = createDataPartition(y=pjdata$classe, p=0.7, list=FALSE)
+training = pjdata[intrain,]
+testing = pjdata[-intrain,]
+dim(training) ; dim(testing)
+```
+
+
+## model fitting 
+  - Used three models - 1)rpart, 2)random forest, 3)LDA
+```{r}
+tree_modfit = train(classe~., data=training , method="rpart")
+tree_modfit
+rf_modfit = train(classe~., data=training , method="rf")
+rf_modfit
+lda_modfit = train(classe~., data=training , method="lda")
+lda_modfit
+```
+
+
+## prediction
+  - prediction on testing data
+```{r}
+tree_test = predict(tree_modfit, testing)
+rf_test = predict(rf_modfit, testing)
+lda_test = predict(lda_modfit, testing)
+```
+
+
+## make confusion-matrix
+   - rpart model's accuracy is about 50~77%
+   - LDA models's accuracy is about 78~86%
+   - random-forest model's accuracy is about 99%
+```{r}
+confusion_tree = confusionMatrix(tree_test, testing$classe)
+confusion_tree
+confusion_rf = confusionMatrix(rf_test, testing$classe)
+confusion_rf 
+confusion_lda = confusionMatrix(lda_test, testing$classe)
+confusion_lda
+```
+
+
+## Results
+  - It shows that random-forest model is better than other models
+  
+  
+## submission (20 test sample)
+```{r}
+answers = predict(rf_modfit, testing_sub)
+
+pml_write_files = function(x){
+  n = length(x)
+  for(i in 1:n){
+    filename = paste0("problem_id_",i,".txt")
+    write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+  }
+}
+
+pml_write_files(answers)
+```  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
