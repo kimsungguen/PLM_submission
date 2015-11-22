@@ -437,7 +437,7 @@ dim(training) ; dim(testing)
 
 ## model fitting 
   - Used three models - rpart / random forest / LDA
-  - in sample error : rapart (0.5) / randomforest (0.02) / LDA (0.3)
+  - in sample error : rpart (0.5) / randomforest (0.02) / LDA (0.3)
 ```r
 tree_modfit = train(classe~., data=training , method="rpart")
 ```
@@ -546,7 +546,7 @@ lda_modfit
 
 ## prediction
   - prediction on testing data
-  - out of sample error : rapart (0.51) / randomforest (0.01) / LDA (0.3)
+  - out of sample error : rpart (0.51) / randomforest (0.01) / LDA (0.3)
 ```r
 tree_test = predict(tree_modfit, testing)
 rf_test = predict(rf_modfit, testing)
