@@ -417,9 +417,8 @@ names(pjdata)
 ```
 
 
-## data splitting
-  - 70% of data for training, 30% of data for testing
-
+## data splitting for cross-validation
+  - 70% of data for training set, 30% of data for testing set
 ```r
 intrain = createDataPartition(y=pjdata$classe, p=0.7, list=FALSE)
 training = pjdata[intrain,]
@@ -437,8 +436,8 @@ dim(training) ; dim(testing)
 
 
 ## model fitting 
-  - Used three models - 1)rpart, 2)random forest, 3)LDA
-
+  - Used three models - rpart / random forest / LDA
+  - in sample error : rapart (0.5) / randomforest (0.02) / LDA (0.3)
 ```r
 tree_modfit = train(classe~., data=training , method="rpart")
 ```
@@ -547,7 +546,7 @@ lda_modfit
 
 ## prediction
   - prediction on testing data
-
+  - out of sample error : rapart (0.51) / randomforest (0.01) / LDA (0.3)
 ```r
 tree_test = predict(tree_modfit, testing)
 rf_test = predict(rf_modfit, testing)
@@ -556,8 +555,8 @@ lda_test = predict(lda_modfit, testing)
 
 
 ## make confusion-matrix
-   - rpart model's accuracy is about 50~77%
-   - LDA models's accuracy is about 78~86%
+   - rpart model's accuracy is about 49%
+   - LDA models's accuracy is about 70%
    - random-forest model's accuracy is about 99%
 
 ```r
